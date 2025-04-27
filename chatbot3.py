@@ -202,7 +202,7 @@ def save_session_details(session_id, user_intent, chat_start_time, last_response
 # Create the initial system prompt that includes jobs, trainings, and events
 asha_system_prompt = {
     "role": "system",
-    "content": asha_prompt.strip() + "\n\nJob Listings:\n" + get_job_context() + "\n\nTraining and Courses:\n" + get_training_context() + "\n\nEvents:\n" + get_event_context()
+    "content": asha_prompt.strip() + "\n\nJob Listings in CSV format:\n" + get_job_context() + "\n\nTraining and Course Listing in CSV format:\n" + get_training_context() + "\n\nEvents Listing in CSV format:\n" + get_event_context()
 }
 
 # Core function to chat with Asha
