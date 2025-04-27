@@ -5,7 +5,7 @@ NOTE:
 This assumes that you already have python installed on your system. If not please install Python3 before starting with next steps.
 
 
-Step-1: Clone this repository to your local system.
+Step-1: Clone or Download this git repository to your local system.
 
 Step-2: Install all the dependency using the following command in a Terminal / Command Prompt: 
 
