@@ -6,10 +6,15 @@ import json
 import uuid
 import pandas as pd
 import datetime
+import random
 
-# API Keys for chatbot and intent extraction
-CHATBOT_API_KEY = os.getenv("CHATBOT_API_KEY")
-INTENT_API_KEY = os.getenv("INTENT_API_KEY")
+# API Keys for OpenRouter APIs; Keys can be hardcoded here or passed as environment variables (preferred)
+# Generate 2 keys from https://openrouter.ai/settings/keys
+
+KEY_1 = os.getenv("CHATBOT_API_KEY")
+KEY_2 = os.getenv("INTENT_API_KEY")
+
+keys = [KEY_1, KEY_2]
 
 # Load datasets containing jobs, trainings, and events
 jobs_df = pd.read_csv("jobs.csv")
@@ -18,18 +23,6 @@ events_df = pd.read_csv("events.csv")
 
 # API endpoint for OpenRouter GPT models
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-
-# Headers for authentication when calling Chatbot API
-CHATBOT_API_HEADERS = {
-    "Authorization": f"Bearer {CHATBOT_API_KEY}",
-    "Content-Type": "application/json",
-}
-
-# Headers for authentication when calling Intent Extraction API
-INTENT_API_HEADERS = {
-    "Authorization": f"Bearer {INTENT_API_KEY}",
-    "Content-Type": "application/json",
-}
 
 # ✅ Full system prompt (WILL NOT show in chat)
 asha_prompt = """
@@ -119,6 +112,18 @@ RULES to follow ALWAYS:
 # Warm welcome message
 initial_message = [("Asha", "👋 Hello! I'm Asha – your friendly career guide! What's your name? 😊")]
 
+def get_api_header():
+
+    key_index = random.randint(0, len(keys)-1)
+
+    print(f"Using API Key at Index: {key_index}")
+
+    return {
+    "Authorization": f"Bearer {keys[key_index]}",
+    "Content-Type": "application/json",
+    }
+
+
 # Function to get the current UTC time in a formatted string
 def get_current_time():
     now = datetime.datetime.utcnow()
@@ -166,7 +171,7 @@ def extract_user_intent_with_gpt(chat_history):
 
     try:
         # Call the Intent API
-        response = requests.post(API_URL, headers=INTENT_API_HEADERS, json=data)
+        response = requests.post(API_URL, headers=get_api_header(), json=data)
         response.raise_for_status()  # Raise an exception for HTTP errors
         reply = response.json()["choices"][0]["message"]["content"]
     except Exception as e:
@@ -228,7 +233,7 @@ def chat_with_asha(chat_history, user_input):
 
     try:
         # Call the chatbot API
-        response = requests.post(API_URL, headers=CHATBOT_API_HEADERS, json=data)
+        response = requests.post(API_URL, headers=get_api_header(), json=data)
         print("API USAGE: " + str(response.json()["usage"]))  # Debugging: print usage stats
         response.raise_for_status()  # Raise an exception for bad HTTP responses
         reply = response.json()["choices"][0]["message"]["content"]  # Get chatbot reply
@@ -248,8 +253,8 @@ def chat_with_asha(chat_history, user_input):
     display_history = [("You", m["content"]) if m["role"] == "user" else ("Asha", m["content"]) for m in chat_history]
 
     # Extract user intent and save session details
-    user_intent = extract_user_intent_with_gpt(chat_history)
-    save_session_details(session_id, user_intent, chat_start_time, current_response_time)
+    # user_intent = extract_user_intent_with_gpt(chat_history)
+    # save_session_details(session_id, user_intent, chat_start_time, current_response_time)
 
     return display_history, chat_history
 
