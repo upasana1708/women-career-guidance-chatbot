@@ -12,7 +12,7 @@ Step-2: Install all the dependency using the following command in a Terminal / C
 pip3 install -r requirements.txt
 
 
-Step-3: Register to [https://openrouter.ai/ ](https://openrouter.ai/keys) and Generate 2 API Keys
+Step-3: Register to [https://openrouter.ai/](https://openrouter.ai/settings/keys) and Generate 2 API Keys
 
 
 Step-4: In file "chatbot3.py" set the value CHATBOT_API_KEY & INTENT_API_KEY OR Simply set the values as environment variables (CHATBOT_API_KEY & INTENT_API_KEY) via your terminal/command prompt.
